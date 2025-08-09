@@ -1,0 +1,48 @@
+{
+    "name": "TaskMaster Pro - Ultimate To-Do List",
+    "short_name": "TaskMaster Pro",
+    "description": "A professional, feature-rich to-do list application with stunning UI and advanced functionality",
+    "version": "1.0.0",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#f8fafc",
+    "theme_color": "#6366f1",
+    "orientation": "portrait-primary",
+    "categories": ["productivity", "utilities", "lifestyle"],
+    "icons": [
+        {
+            "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192' fill='%236366f1'%3E%3Cpath d='M96 16c44.18 0 80 35.82 80 80s-35.82 80-80 80-80-35.82-80-80 35.82-80 80-80zm-20 116l56-56-8-8-48 48-24-24-8 8 32 32z'/%3E%3C/svg%3E",
+            "sizes": "192x192",
+            "type": "image/svg+xml"
+        },
+        {
+            "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' fill='%236366f1'%3E%3Cpath d='M256 32c123.7 0 224 100.3 224 224s-100.3 224-224 224S32 379.7 32 256 132.3 32 256 32zm-40 308l112-112-16-16-96 96-48-48-16 16 64 64z'/%3E%3C/svg%3E",
+            "sizes": "512x512",
+            "type": "image/svg+xml"
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1280 720' fill='%23f8fafc'%3E%3Crect width='1280' height='720' fill='%23f8fafc'/%3E%3Ctext x='640' y='360' text-anchor='middle' font-family='Arial' font-size='48' fill='%236366f1'%3ETaskMaster Pro%3C/text%3E%3C/svg%3E",
+            "sizes": "1280x720",
+            "type": "image/svg+xml",
+            "form_factor": "wide"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "Add New Task",
+            "short_name": "Add Task",
+            "description": "Quickly add a new task",
+            "url": "/?action=add",
+            "icons": [
+                {
+                    "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236366f1'%3E%3Cpath d='M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z'/%3E%3C/svg%3E",
+                    "sizes": "96x96"
+                }
+            ]
+        }
+    ],
+    "related_applications": [],
+    "prefer_related_applications": false
+}

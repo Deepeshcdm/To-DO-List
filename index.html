@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskMaster Pro - Ultimate To-Do List</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="A professional, feature-rich to-do list application with stunning UI and advanced functionality">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="TaskMaster Pro">
+    <meta name="msapplication-TileColor" content="#6366f1">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236366f1'%3E%3Cpath d='M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14l-5-5 1.41-1.41L14 14.17l7.59-7.59L23 8l-9 9z'/%3E%3C/svg%3E">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-tasks"></i>
+                    <h1>TaskMaster Pro</h1>
+                </div>
+                <div class="header-stats">
+                    <div class="stat-item">
+                        <span class="stat-number" id="totalTasks">0</span>
+                        <span class="stat-label">Total</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="completedTasks">0</span>
+                        <span class="stat-label">Completed</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="pendingTasks">0</span>
+                        <span class="stat-label">Pending</span>
+                    </div>
+                </div>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Task Input Section -->
+            <section class="task-input-section">
+                <div class="input-container">
+                    <div class="input-wrapper">
+                        <i class="fas fa-plus input-icon"></i>
+                        <input 
+                            type="text" 
+                            id="taskInput" 
+                            placeholder="What needs to be done today?"
+                            class="task-input"
+                            maxlength="500"
+                        >
+                        <div class="input-actions">
+                            <select id="prioritySelect" class="priority-select">
+                            <option value="low">🟢 Low Priority</option>
+                            <option value="medium" selected>🟡 Medium Priority</option>
+                            <option value="high">🔴 High Priority</option>
+                            <option value="urgent">⚡ Urgent</option>
+                        </select>
+                        <button class="quick-add-btn" id="quickAddBtn" title="Quick Add">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <button class="detailed-add-btn" id="detailedAddBtn" title="Detailed Add">
+                            <i class="fas fa-cog"></i>
+                        </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Filter and Search Section -->
+            <section class="controls-section">
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        placeholder="Search tasks..."
+                        class="search-input"
+                    >
+                </div>
+                <div class="filter-container">
+                    <button class="filter-btn active" data-filter="all">
+                        <i class="fas fa-list"></i>
+                        All
+                    </button>
+                    <button class="filter-btn" data-filter="pending">
+                        <i class="fas fa-clock"></i>
+                        Pending
+                    </button>
+                    <button class="filter-btn" data-filter="completed">
+                        <i class="fas fa-check"></i>
+                        Completed
+                    </button>
+                    <button class="filter-btn" data-filter="urgent">
+                        <i class="fas fa-bolt"></i>
+                        Urgent
+                    </button>
+                    <button class="filter-btn" data-filter="overdue">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Overdue
+                    </button>
+                    <button class="filter-btn" data-filter="today">
+                        <i class="fas fa-calendar-day"></i>
+                        Due Today
+                    </button>
+                </div>
+                <div class="bulk-actions">
+                    <button class="bulk-btn" id="selectAllBtn">
+                        <i class="fas fa-check-square"></i>
+                        Select All
+                    </button>
+                    <button class="bulk-btn danger" id="deleteSelectedBtn">
+                        <i class="fas fa-trash"></i>
+                        Delete Selected
+                    </button>
+                    <button class="bulk-btn" id="clearCompletedBtn">
+                        <i class="fas fa-broom"></i>
+                        Clear Completed
+                    </button>
+                </div>
+            </section>
+
+            <!-- Tasks Container -->
+            <section class="tasks-section">
+                <div class="tasks-container" id="tasksContainer">
+                    <!-- Tasks will be dynamically inserted here -->
+                </div>
+                
+                <!-- Empty State -->
+                <div class="empty-state" id="emptyState">
+                    <div class="empty-illustration">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <h3>No tasks yet</h3>
+                    <p>Add your first task to get started on your productivity journey!</p>
+                </div>
+            </section>
+        </main>
+
+                <!-- Task Modal for Editing -->
+        <div class="modal-overlay" id="taskModal">
+            <div class="modal large">
+                <div class="modal-header">
+                    <h3 id="modalTitle">Edit Task</h3>
+                    <button class="modal-close" id="modalClose">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="editTaskInput">Task Title *</label>
+                        <input 
+                            type="text"
+                            id="editTaskInput" 
+                            placeholder="Enter task title..."
+                            maxlength="200"
+                            required
+                        />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editTaskDescription">Description</label>
+                        <textarea 
+                            id="editTaskDescription" 
+                            placeholder="Add detailed description, notes, or instructions..."
+                            rows="4"
+                            maxlength="1000"
+                        ></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group half">
+                            <label for="editPrioritySelect">Priority</label>
+                            <select id="editPrioritySelect" class="priority-select">
+                                <option value="low">🟢 Low Priority</option>
+                                <option value="medium">🟡 Medium Priority</option>
+                                <option value="high">🔴 High Priority</option>
+                                <option value="urgent">⚡ Urgent</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group half">
+                            <label for="editCategorySelect">Category</label>
+                            <select id="editCategorySelect" class="category-select">
+                                <option value="personal">👤 Personal</option>
+                                <option value="work">💼 Work</option>
+                                <option value="health">🏥 Health</option>
+                                <option value="finance">💰 Finance</option>
+                                <option value="education">📚 Education</option>
+                                <option value="shopping">🛒 Shopping</option>
+                                <option value="travel">✈️ Travel</option>
+                                <option value="home">🏠 Home</option>
+                                <option value="other">📋 Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group half">
+                            <label for="editDueDate">Due Date</label>
+                            <input type="datetime-local" id="editDueDate" class="date-input">
+                        </div>
+                        
+                        <div class="form-group half">
+                            <label for="editEstimatedTime">Estimated Time</label>
+                            <select id="editEstimatedTime" class="time-select">
+                                <option value="">No estimate</option>
+                                <option value="15">15 minutes</option>
+                                <option value="30">30 minutes</option>
+                                <option value="60">1 hour</option>
+                                <option value="120">2 hours</option>
+                                <option value="240">4 hours</option>
+                                <option value="480">8 hours</option>
+                                <option value="custom">Custom</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" id="customTimeGroup" style="display: none;">
+                        <label for="editCustomTime">Custom Time (minutes)</label>
+                        <input type="number" id="editCustomTime" min="1" max="10080" placeholder="Enter minutes">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editTags">Tags</label>
+                        <input 
+                            type="text" 
+                            id="editTags" 
+                            placeholder="Add tags separated by commas (e.g., urgent, meeting, review)"
+                            maxlength="200"
+                        />
+                        <small class="form-hint">Separate multiple tags with commas</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editSubtasks">Subtasks</label>
+                        <div id="subtasksList" class="subtasks-container"></div>
+                        <button type="button" class="btn secondary small" id="addSubtaskBtn">
+                            <i class="fas fa-plus"></i> Add Subtask
+                        </button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editLocation">Location</label>
+                        <input 
+                            type="text" 
+                            id="editLocation" 
+                            placeholder="Add location (optional)"
+                            maxlength="100"
+                        />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editUrl">Related URL</label>
+                        <input 
+                            type="url" 
+                            id="editUrl" 
+                            placeholder="https://example.com"
+                            maxlength="500"
+                        />
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="editRecurring">
+                                <span class="checkmark"></span>
+                                Recurring Task
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" id="recurringOptions" style="display: none;">
+                        <label for="editRecurrencePattern">Repeat Every</label>
+                        <select id="editRecurrencePattern" class="recurrence-select">
+                            <option value="daily">Daily</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="yearly">Yearly</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn secondary" id="modalCancel">Cancel</button>
+                    <button class="btn primary" id="modalSave">Save Changes</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notifications -->
+        <div class="toast-container" id="toastContainer"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
