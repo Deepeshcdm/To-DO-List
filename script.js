@@ -18,7 +18,7 @@ class TaskManager {
             'home': '🏠 Home',
             'other': '📋 Other'
         };
-        
+
         // Initialize the application
         this.init();
     }
@@ -109,12 +109,12 @@ class TaskManager {
         this.saveTasks();
         this.updateUI();
         this.showToast('Task added successfully', 'success');
-        
+
         // Clear inputs
         if (!isDetailed) {
             document.getElementById('taskInput').value = '';
         }
-        
+
         return true;
     }
 
@@ -151,12 +151,12 @@ class TaskManager {
 
         task.completed = !task.completed;
         task.completedAt = task.completed ? new Date().toISOString() : null;
-        
+
         // Handle recurring tasks
         if (task.completed && task.recurring) {
             this.createRecurringTask(task);
         }
-        
+
         this.saveTasks();
         this.updateUI();
         this.showToast(
@@ -172,12 +172,12 @@ class TaskManager {
         newTask.completed = false;
         newTask.completedAt = null;
         newTask.createdAt = new Date().toISOString();
-        
+
         // Calculate next due date
         if (newTask.dueDate) {
             const currentDue = new Date(newTask.dueDate);
             const nextDue = new Date(currentDue);
-            
+
             switch (newTask.recurrencePattern) {
                 case 'daily':
                     nextDue.setDate(nextDue.getDate() + 1);
@@ -192,14 +192,14 @@ class TaskManager {
                     nextDue.setFullYear(nextDue.getFullYear() + 1);
                     break;
             }
-            
+
             newTask.dueDate = nextDue.toISOString();
         }
-        
+
         // Reset subtasks
         newTask.subtasks = newTask.subtasks.map(st => ({ ...st, completed: false }));
         newTask.timeSpent = 0;
-        
+
         this.tasks.unshift(newTask);
         this.showToast(`Recurring task created for ${this.formatDate(newTask.dueDate)}`, 'info');
     }
@@ -207,7 +207,7 @@ class TaskManager {
     toggleSubtask(taskId, subtaskIndex) {
         const task = this.tasks.find(t => t.id === taskId);
         if (!task || !task.subtasks[subtaskIndex]) return false;
-        
+
         task.subtasks[subtaskIndex].completed = !task.subtasks[subtaskIndex].completed;
         this.saveTasks();
         this.updateUI();
@@ -235,7 +235,7 @@ class TaskManager {
         const count = this.selectedTasks.size;
         this.tasks = this.tasks.filter(task => !this.selectedTasks.has(task.id));
         this.selectedTasks.clear();
-        
+
         this.saveTasks();
         this.updateUI();
         this.showToast(`${count} task(s) deleted successfully`, 'success');
@@ -250,7 +250,7 @@ class TaskManager {
 
         this.tasks = this.tasks.filter(task => !task.completed);
         this.selectedTasks.clear();
-        
+
         this.saveTasks();
         this.updateUI();
         this.showToast(`${completedCount} completed task(s) cleared`, 'success');
@@ -263,7 +263,7 @@ class TaskManager {
         // Apply search filter
         if (this.searchQuery) {
             const query = this.searchQuery.toLowerCase();
-            filtered = filtered.filter(task => 
+            filtered = filtered.filter(task =>
                 task.title.toLowerCase().includes(query) ||
                 task.description.toLowerCase().includes(query) ||
                 task.tags.some(tag => tag.includes(query)) ||
@@ -274,7 +274,7 @@ class TaskManager {
         // Apply category filter
         const now = new Date();
         const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        
+
         switch (this.currentFilter) {
             case 'pending':
                 filtered = filtered.filter(task => !task.completed);
@@ -308,21 +308,21 @@ class TaskManager {
             if (a.completed !== b.completed) {
                 return a.completed - b.completed;
             }
-            
+
             const priorityOrder = { urgent: 4, high: 3, medium: 2, low: 1 };
             if (priorityOrder[a.priority] !== priorityOrder[b.priority]) {
                 return priorityOrder[b.priority] - priorityOrder[a.priority];
             }
-            
+
             // Sort by due date if both have due dates
             if (a.dueDate && b.dueDate) {
                 return new Date(a.dueDate) - new Date(b.dueDate);
             }
-            
+
             // Tasks with due dates come first
             if (a.dueDate && !b.dueDate) return -1;
             if (!a.dueDate && b.dueDate) return 1;
-            
+
             return new Date(b.createdAt) - new Date(a.createdAt);
         });
 
@@ -354,7 +354,7 @@ class TaskManager {
     selectAllVisibleTasks() {
         const visibleTasks = this.getFilteredTasks();
         const allSelected = visibleTasks.every(task => this.selectedTasks.has(task.id));
-        
+
         if (allSelected) {
             // Deselect all visible tasks
             visibleTasks.forEach(task => this.selectedTasks.delete(task.id));
@@ -362,7 +362,7 @@ class TaskManager {
             // Select all visible tasks
             visibleTasks.forEach(task => this.selectedTasks.add(task.id));
         }
-        
+
         this.updateUI();
     }
 
@@ -382,7 +382,7 @@ class TaskManager {
         if (filteredTasks.length === 0) {
             container.style.display = 'none';
             emptyState.style.display = 'block';
-            
+
             if (this.searchQuery) {
                 emptyState.innerHTML = `
                     <div class="empty-illustration">
@@ -426,11 +426,11 @@ class TaskManager {
         const completedSubtasks = task.subtasks.filter(st => st.completed).length;
         const totalSubtasks = task.subtasks.length;
         const progress = totalSubtasks > 0 ? (completedSubtasks / totalSubtasks) * 100 : 0;
-        
+
         let extraClasses = '';
         if (isOverdue) extraClasses += ' overdue';
         if (isDueToday) extraClasses += ' due-today';
-        
+
         return `
             <div class="task-item ${task.completed ? 'completed' : ''} ${isSelected ? 'selected' : ''} priority-${task.priority}${extraClasses}" 
                  data-task-id="${task.id}">
@@ -491,28 +491,28 @@ class TaskManager {
 
     renderTaskExtendedDetails(task) {
         const details = [];
-        
+
         if (task.dueDate) {
             const dueText = this.formatDueDate(task.dueDate);
             details.push(`<span class="task-info-item"><i class="fas fa-calendar"></i> ${dueText}</span>`);
         }
-        
+
         if (task.estimatedTime) {
             details.push(`<span class="task-info-item"><i class="fas fa-clock"></i> ${this.formatTime(task.estimatedTime)}</span>`);
         }
-        
+
         if (task.location) {
             details.push(`<span class="task-info-item"><i class="fas fa-map-marker-alt"></i> ${this.escapeHtml(task.location)}</span>`);
         }
-        
+
         if (task.url) {
             details.push(`<span class="task-info-item"><a href="${task.url}" target="_blank" class="task-url"><i class="fas fa-link"></i> Link</a></span>`);
         }
-        
+
         if (task.recurring) {
             details.push(`<span class="task-info-item"><i class="fas fa-redo"></i> Repeats ${task.recurrencePattern}</span>`);
         }
-        
+
         if (details.length > 0) {
             return `
                 <div class="task-details-extended">
@@ -522,14 +522,14 @@ class TaskManager {
                 </div>
             `;
         }
-        
+
         return '';
     }
 
     getPriorityEmoji(priority) {
         const emojis = {
             low: '🟢',
-            medium: '🟡', 
+            medium: '🟡',
             high: '🔴',
             urgent: '⚡'
         };
@@ -541,7 +541,7 @@ class TaskManager {
         const now = new Date();
         const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
-        
+
         if (due < now) {
             return `<span style="color: var(--danger-color)">Overdue (${due.toLocaleDateString()})</span>`;
         } else if (due >= today && due < tomorrow) {
@@ -567,8 +567,8 @@ class TaskManager {
         const due = new Date(dueDate);
         const today = new Date();
         return due.getDate() === today.getDate() &&
-               due.getMonth() === today.getMonth() &&
-               due.getFullYear() === today.getFullYear();
+            due.getMonth() === today.getMonth() &&
+            due.getFullYear() === today.getFullYear();
     }
 
     updateStats() {
@@ -591,8 +591,8 @@ class TaskManager {
         const selectAllBtn = document.getElementById('selectAllBtn');
         const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
         const visibleTasks = this.getFilteredTasks();
-        const allSelected = visibleTasks.length > 0 && 
-                           visibleTasks.every(task => this.selectedTasks.has(task.id));
+        const allSelected = visibleTasks.length > 0 &&
+            visibleTasks.every(task => this.selectedTasks.has(task.id));
 
         selectAllBtn.innerHTML = `
             <i class="fas ${allSelected ? 'fa-minus-square' : 'fa-check-square'}"></i>
@@ -609,7 +609,7 @@ class TaskManager {
         if (!task) return;
 
         this.currentEditingTask = taskId;
-        
+
         // Populate form fields
         document.getElementById('editTaskInput').value = task.title;
         document.getElementById('editTaskDescription').value = task.description || '';
@@ -622,21 +622,21 @@ class TaskManager {
         document.getElementById('editUrl').value = task.url || '';
         document.getElementById('editRecurring').checked = task.recurring || false;
         document.getElementById('editRecurrencePattern').value = task.recurrencePattern || 'daily';
-        
+
         // Handle custom time
         this.toggleCustomTimeInput();
         this.toggleRecurringOptions();
-        
+
         // Populate subtasks
         this.renderSubtasks(task.subtasks);
-        
+
         document.getElementById('modalTitle').textContent = 'Edit Task';
         document.getElementById('taskModal').classList.add('active');
     }
 
     openNewTaskModal() {
         this.currentEditingTask = null;
-        
+
         // Clear form fields
         document.getElementById('editTaskInput').value = '';
         document.getElementById('editTaskDescription').value = '';
@@ -649,10 +649,10 @@ class TaskManager {
         document.getElementById('editUrl').value = '';
         document.getElementById('editRecurring').checked = false;
         document.getElementById('editRecurrencePattern').value = 'daily';
-        
+
         // Clear subtasks
         this.renderSubtasks([]);
-        
+
         document.getElementById('modalTitle').textContent = 'Add New Task';
         document.getElementById('taskModal').classList.add('active');
     }
@@ -660,7 +660,7 @@ class TaskManager {
     renderSubtasks(subtasks) {
         const container = document.getElementById('subtasksList');
         container.innerHTML = '';
-        
+
         subtasks.forEach((subtask, index) => {
             const subtaskElement = document.createElement('div');
             subtaskElement.className = 'subtask-item';
@@ -680,7 +680,7 @@ class TaskManager {
     addSubtaskToModal() {
         const container = document.getElementById('subtasksList');
         const index = container.children.length;
-        
+
         const subtaskElement = document.createElement('div');
         subtaskElement.className = 'subtask-item';
         subtaskElement.innerHTML = `
@@ -692,7 +692,7 @@ class TaskManager {
             </button>
         `;
         container.appendChild(subtaskElement);
-        
+
         // Focus the new input
         const input = subtaskElement.querySelector('.subtask-input');
         input.focus();
@@ -719,11 +719,11 @@ class TaskManager {
     getSubtasksFromModal() {
         const container = document.getElementById('subtasksList');
         const subtasks = [];
-        
+
         Array.from(container.children).forEach(item => {
             const checkbox = item.querySelector('input[type="checkbox"]');
             const input = item.querySelector('.subtask-input');
-            
+
             if (input.value.trim()) {
                 subtasks.push({
                     title: input.value.trim(),
@@ -731,14 +731,14 @@ class TaskManager {
                 });
             }
         });
-        
+
         return subtasks;
     }
 
     toggleCustomTimeInput() {
         const select = document.getElementById('editEstimatedTime');
         const customGroup = document.getElementById('customTimeGroup');
-        
+
         if (select.value === 'custom') {
             customGroup.style.display = 'block';
         } else {
@@ -749,7 +749,7 @@ class TaskManager {
     toggleRecurringOptions() {
         const checkbox = document.getElementById('editRecurring');
         const options = document.getElementById('recurringOptions');
-        
+
         if (checkbox.checked) {
             options.style.display = 'block';
         } else {
@@ -764,7 +764,7 @@ class TaskManager {
         const day = String(date.getDate()).padStart(2, '0');
         const hours = String(date.getHours()).padStart(2, '0');
         const minutes = String(date.getMinutes()).padStart(2, '0');
-        
+
         return `${year}-${month}-${day}T${hours}:${minutes}`;
     }
 
@@ -828,20 +828,20 @@ class TaskManager {
     toggleTheme() {
         const currentTheme = document.documentElement.getAttribute('data-theme');
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        
+
         document.documentElement.setAttribute('data-theme', newTheme);
         localStorage.setItem('taskmaster_theme', newTheme);
-        
+
         const themeIcon = document.querySelector('#themeToggle i');
         themeIcon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-        
+
         this.showToast(`Switched to ${newTheme} theme`, 'success');
     }
 
     loadTheme() {
         const savedTheme = localStorage.getItem('taskmaster_theme') || 'light';
         document.documentElement.setAttribute('data-theme', savedTheme);
-        
+
         const themeIcon = document.querySelector('#themeToggle i');
         themeIcon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
     }
@@ -850,7 +850,7 @@ class TaskManager {
     showToast(message, type = 'success', duration = 3000) {
         const container = document.getElementById('toastContainer');
         const toastId = Date.now();
-        
+
         const icons = {
             success: 'fa-check-circle',
             error: 'fa-exclamation-circle',
@@ -869,10 +869,10 @@ class TaskManager {
         `;
 
         container.appendChild(toast);
-        
+
         // Trigger animation
         setTimeout(() => toast.classList.add('show'), 10);
-        
+
         // Auto-remove
         setTimeout(() => this.closeToast(toastId), duration);
     }
@@ -894,7 +894,7 @@ class TaskManager {
         const taskInput = document.getElementById('taskInput');
         const quickAddBtn = document.getElementById('quickAddBtn');
         const detailedAddBtn = document.getElementById('detailedAddBtn');
-        
+
         quickAddBtn.addEventListener('click', () => {
             const title = taskInput.value.trim();
             const priority = document.getElementById('prioritySelect').value;
@@ -963,11 +963,11 @@ class TaskManager {
 
         // Enhanced modal events
         document.getElementById('addSubtaskBtn').addEventListener('click', () => this.addSubtaskToModal());
-        
+
         document.getElementById('editEstimatedTime').addEventListener('change', () => {
             this.toggleCustomTimeInput();
         });
-        
+
         document.getElementById('editRecurring').addEventListener('change', () => {
             this.toggleRecurringOptions();
         });
@@ -985,13 +985,13 @@ class TaskManager {
             if (e.key === 'Escape') {
                 this.closeEditModal();
             }
-            
+
             // Ctrl+A to select all (when not in input)
             if (e.ctrlKey && e.key === 'a' && !e.target.matches('input, textarea')) {
                 e.preventDefault();
                 this.selectAllVisibleTasks();
             }
-            
+
             // Delete to remove selected
             if (e.key === 'Delete' && this.selectedTasks.size > 0 && !e.target.matches('input, textarea')) {
                 const count = this.selectedTasks.size;
@@ -999,7 +999,7 @@ class TaskManager {
                     this.deleteSelectedTasks();
                 }
             }
-            
+
             // Ctrl+N for new detailed task
             if (e.ctrlKey && e.key === 'n' && !e.target.matches('input, textarea')) {
                 e.preventDefault();
@@ -1030,7 +1030,7 @@ class TaskManager {
         if (diffMins < 60) return `${diffMins}m ago`;
         if (diffHours < 24) return `${diffHours}h ago`;
         if (diffDays < 7) return `${diffDays}d ago`;
-        
+
         return date.toLocaleDateString();
     }
 
@@ -1047,12 +1047,12 @@ class TaskManager {
         const dataStr = JSON.stringify(this.tasks, null, 2);
         const dataBlob = new Blob([dataStr], { type: 'application/json' });
         const url = URL.createObjectURL(dataBlob);
-        
+
         const link = document.createElement('a');
         link.href = url;
         link.download = `taskmaster-backup-${new Date().toISOString().split('T')[0]}.json`;
         link.click();
-        
+
         URL.revokeObjectURL(url);
         this.showToast('Tasks exported successfully', 'success');
     }
@@ -1082,19 +1082,19 @@ class TaskManager {
         const today = new Date();
         const todayStr = today.toISOString().split('T')[0];
         const weekAgo = new Date(today - 7 * 24 * 60 * 60 * 1000);
-        
-        const todayCompleted = this.tasks.filter(t => 
+
+        const todayCompleted = this.tasks.filter(t =>
             t.completed && t.completedAt && t.completedAt.startsWith(todayStr)
         ).length;
-        
-        const weekCompleted = this.tasks.filter(t => 
+
+        const weekCompleted = this.tasks.filter(t =>
             t.completed && t.completedAt && new Date(t.completedAt) >= weekAgo
         ).length;
-        
+
         const totalCompleted = this.tasks.filter(t => t.completed).length;
-        const completionRate = this.tasks.length > 0 ? 
+        const completionRate = this.tasks.length > 0 ?
             Math.round((totalCompleted / this.tasks.length) * 100) : 0;
-        
+
         return {
             todayCompleted,
             weekCompleted,
@@ -1111,7 +1111,7 @@ let taskManager;
 // Initialize the application when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     taskManager = new TaskManager();
-    
+
     // Add some enhanced sample tasks for demo (only if no existing tasks)
     if (taskManager.tasks.length === 0) {
         setTimeout(() => {
@@ -1129,7 +1129,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     { title: 'Add your first real task', completed: false }
                 ]
             }, true);
-            
+
             // Sample work task
             taskManager.addTask({
                 title: '📊 Prepare quarterly report',
@@ -1147,7 +1147,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     { title: 'Review with manager', completed: false }
                 ]
             }, true);
-            
+
             // Health task
             taskManager.addTask({
                 title: '🏃‍♂️ Morning workout routine',
@@ -1160,7 +1160,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 estimatedTime: 30,
                 location: 'Home Gym'
             }, true);
-            
+
             // Urgent task
             taskManager.addTask({
                 title: '⚡ Fix critical bug in production',
@@ -1172,7 +1172,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 estimatedTime: 120,
                 url: 'https://github.com/project/issues/123'
             }, true);
-            
+
             // Shopping task
             taskManager.addTask({
                 title: '🛒 Weekly grocery shopping',

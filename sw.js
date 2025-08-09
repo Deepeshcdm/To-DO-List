@@ -30,7 +30,7 @@ self.addEventListener('fetch', (event) => {
                 // Return cached version or fetch from network
                 return response || fetch(event.request);
             }
-        )
+            )
     );
 });
 
